@@ -6,4 +6,5 @@ export const SITE_CONFIG = {
   url: 'https://spurana.com',
   author: 'Dr. Spurana',
   email: 'hello@spurana.com',
+  googleAnalyticsId: 'G-4243TZ72L7',
 }

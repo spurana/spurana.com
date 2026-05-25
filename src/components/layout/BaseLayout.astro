@@ -1,5 +1,6 @@
 ---
 import '../../styles/global.css'
+import GoogleAnalytics from '../GoogleAnalytics.astro'
 import { SITE_CONFIG } from '../../config/site'
 
 const currentYear = new Date().getFullYear()
@@ -49,6 +50,7 @@ const pageImage = new URL(image || siteImage, Astro.url).href
       href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600;700&family=Muli:wght@400;500;600&family=ZCOOL+XiaoWei&display=swap"
       rel="stylesheet"
     />
+    <GoogleAnalytics />
   </head>
   <body>
     <div class="site-shell">
