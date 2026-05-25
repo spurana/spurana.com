@@ -1,0 +1,188 @@
+---
+import BaseLayout from '../components/layout/BaseLayout.astro'
+import ScrollReveal from '../components/ScrollReveal.astro'
+import { SITE_CONFIG } from '../config/site'
+import {
+  ABOUT,
+  BANNER,
+  HERO,
+  HOW_IT_WORKS,
+  QUOTES,
+} from '../data/home'
+import { PROGRAMS } from '../data/programs'
+import { getCollection } from 'astro:content'
+
+const articles = await getCollection('articles')
+const latestArticles = [...articles]
+  .sort((a, b) => new Date(b.data.pubDate ?? 0).getTime() - new Date(a.data.pubDate ?? 0).getTime())
+  .slice(0, 3)
+
+const heroTexture = `linear-gradient(180deg, rgba(249,243,235,0.82) 0%, rgba(249,243,235,0.88) 100%), url('${HERO.textureImage}')`
+---
+
+<BaseLayout title={SITE_CONFIG.name} description={SITE_CONFIG.description}>
+  <section
+    class="hero-banner"
+    style={`background-image: ${heroTexture}`}
+  >
+    <div class="container-wide hero-inner reveal">
+      <img src={HERO.logo} alt="" class="hero-logo" width="126" height="198" />
+      <h1 class="hero-title">{HERO.title}</h1>
+      <p class="hero-subtitle">{HERO.subtitle}</p>
+      <a href="#programs" class="btn-primary">Explore Programs</a>
+    </div>
+  </section>
+
+  <section id="programs" class="section section-programs">
+    <div class="container-wide">
+      <header class="section-intro reveal">
+        <h2 class="section-heading section-heading--large">My Specializations</h2>
+      </header>
+
+      <div class="programs-list reveal-stagger">
+        {PROGRAMS.map((program) => (
+          <article id={program.id} class="program-detail">
+            <div class="program-detail-media">
+              <img
+                src={program.image}
+                alt=""
+                class="program-detail-image"
+                width={program.width}
+                height={program.height}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="program-detail-body">
+              <h3 class="program-detail-title">{program.title}</h3>
+              {program.intro.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+              {program.experience && program.experience.length > 0 && (
+                <>
+                  <h4 class="program-detail-subheading">{program.experienceHeading}</h4>
+                  <ul class="program-detail-list">
+                    {program.experience.map((item) => (
+                      <li>
+                        <strong>{item.title}:</strong> {item.description}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+              {program.ideals && program.ideals.length > 0 && (
+                <>
+                  <h4 class="program-detail-subheading">{program.idealsHeading}</h4>
+                  <ol class="program-detail-list program-detail-list--numbered">
+                    {program.ideals.map((item) => (
+                      <li>
+                        <strong>{item.title}:</strong> {item.description}
+                      </li>
+                    ))}
+                  </ol>
+                </>
+              )}
+              {program.closing.map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section section-about">
+    <div class="container-wide">
+      <h2 class="section-heading section-heading--large reveal">{ABOUT.title}</h2>
+
+      <div class="about-stage reveal">
+        <figure class="about-figure">
+          <img
+            src={ABOUT.portrait}
+            alt="Dr. Spurana — Ayurvedic and yoga practitioner"
+            class="about-portrait"
+            width="1200"
+            height="1600"
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
+
+        <div class="about-card">
+          <div class="about-body">
+            {ABOUT.body.split('\n\n').map((para) => (
+              <p>{para}</p>
+            ))}
+          </div>
+          <blockquote class="about-quote">{ABOUT.quote}</blockquote>
+          <a href={`mailto:${SITE_CONFIG.email}`} class="btn-primary">Get in Touch</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="banner-sage reveal">
+    <div class="container-wide">
+      <p>{BANNER.quoteLine}</p>
+    </div>
+  </section>
+
+  <section
+    id="contact"
+    class="banner-health reveal"
+    style={`background-image: linear-gradient(rgba(30,40,35,0.55), rgba(30,40,35,0.55)), url('${BANNER.healthImage}')`}
+  >
+    <div class="container-wide">
+      <h2 class="banner-health-title">For Your Health</h2>
+      <a href={`mailto:${SITE_CONFIG.email}`} class="btn-primary">Get in Touch</a>
+    </div>
+  </section>
+
+  <section class="section section-steps">
+    <div class="container-wide">
+      <h2 class="section-heading section-heading--large reveal">How It Works</h2>
+      <div class="steps-grid reveal-stagger">
+        {HOW_IT_WORKS.map((step) => (
+          <div class={`step-card step-card--${step.tone}`}>
+            <span class="step-num" aria-hidden="true">{step.step}</span>
+            <h3 class="step-title">{step.title}</h3>
+            <p class="step-desc">{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-quotes">
+    <div class="container-wide quotes-stack reveal-stagger">
+      {QUOTES.map((quote) => (
+        <blockquote class="quote-block">{quote}</blockquote>
+      ))}
+    </div>
+  </section>
+
+  {latestArticles.length > 0 && (
+    <section class="section section-articles">
+      <div class="container-wide">
+        <h2 class="section-heading reveal">Recent Articles</h2>
+        <div class="articles-grid reveal-stagger">
+          {latestArticles.map((article) => (
+            <article class="article-card">
+              <h3 class="article-title">
+                <a href={`/articles/${article.id}`}>{article.data.title}</a>
+              </h3>
+              <p class="article-excerpt">{article.data.description}</p>
+              <a href={`/articles/${article.id}`} class="article-link">Read more →</a>
+            </article>
+          ))}
+        </div>
+        <p class="articles-more reveal">
+          <a href="/articles" class="btn-primary btn-sm">View all articles</a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  <ScrollReveal />
+</BaseLayout>

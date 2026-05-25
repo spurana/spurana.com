@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../components/layout/BaseLayout.astro'
+import { getCollection } from 'astro:content'
+
+const allArticles = await getCollection('articles')
+const sortedArticles = allArticles.sort(
+  (a, b) => new Date(b.data.pubDate ?? 0).getTime() - new Date(a.data.pubDate ?? 0).getTime(),
+)
+---
+
+<BaseLayout title="Articles & Resources" description="Wellness articles and resources from Dr. Spurana">
+  <div class="container-wide py-12 md:py-16">
+    <div class="mb-10 border-b pb-8" style="border-color: var(--line);">
+      <p class="eyebrow mb-4">Articles & Resources</p>
+      <h1 class="page-title mb-4">Articles</h1>
+      <p class="lead">Insights on stress, mental wellness, and holistic health.</p>
+    </div>
+
+    <div class="grid gap-6" id="articles-list">
+      {sortedArticles.map((article) => (
+        <article class="article-card p-6 md:p-8">
+          <h2 class="text-xl font-semibold mb-2">
+            <a href={`/articles/${article.id}`} class="hover:underline">
+              {article.data.title}
+            </a>
+          </h2>
+          {article.data.pubDate && (
+            <time class="meta-label block mb-3" datetime={article.data.pubDate}>
+              {new Date(article.data.pubDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+          )}
+          <p class="mb-5 leading-relaxed max-w-3xl" style="color: var(--muted);">
+            {article.data.description}
+          </p>
+          <a href={`/articles/${article.id}`} class="btn btn-outline btn-sm">Read more →</a>
+        </article>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
